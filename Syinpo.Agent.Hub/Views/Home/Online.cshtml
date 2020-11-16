@@ -1,0 +1,116 @@
+﻿@{
+    Layout = "";
+
+}
+@using Syinpo.BusinessLogic.SignalR.Online
+@using Syinpo.Core
+@using Syinpo.Core.Caches
+@using Syinpo.Core.SignalBus.Server
+@using Microsoft.Extensions.Options
+@model Syinpo.Agent.Hub.Controllers.HomeController.HomeData
+
+@inject IOptions<CacheOptions> cacheOptions;
+
+<table>
+    <thead>
+        <tr>
+            <th>设备Id</th>
+            <th>连接Id</th>
+            <th>连接时间</th>
+            <th>ip地址</th>
+            <th>设备号</th>
+            <th>微信名</th>
+            <th>服务器</th>
+            <th>集群系统</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach( var deviceModel in Model.Devices ) {
+                <tr>
+                    <td>@deviceModel.Id</td>
+                    <td>@deviceModel.ConnectionId</td>
+                    <td>@deviceModel.ConnectTime</td>
+                    <td>@deviceModel.IpAddress</td>
+                    <td>@deviceModel.DeviceUuid</td>
+                    <td>@deviceModel.WeiXinName</td>
+                    <td>@deviceModel.ServerName</td>
+                    <td>@deviceModel.SysName</td>
+                </tr>
+                <tr></tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+<br />
+<br />
+
+<table>
+    <thead>
+        <tr>
+            <th>用户Id</th>
+            <th>连接Id</th>
+            <th>连接时间</th>
+            <th>ip地址</th>
+            <th>用户名</th>
+            <th>相关微信</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach( var userModel in Model.Users ) {
+                <tr>
+                    <td>@userModel.Id</td>
+                    <td>@userModel.ConnectionId</td>
+                    <td>@userModel.ConnectTime</td>
+                    <td>@userModel.IpAddress</td>
+                    <td>@userModel.UserName</td>
+                    <td>@userModel.WeiXin</td>
+                </tr>
+                <tr></tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+
+<br />
+<br />
+
+
+<table>
+    <thead>
+        <tr>
+            <th>连接Id</th>
+            <th>主题</th>
+            <th>订阅时间</th>
+            <th>ip地址</th>
+            <th>来自服务器</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach( var usertopic in SignalrDataStore.SubscriptionsByTopic.Values
+                .SelectMany( s => s.SubscriptionsByUser.Values.SelectMany( s => s.SubscriptionsByTopic.Values ) ) ) {
+                <tr>
+                    <td>@usertopic.ConnectionId</td>
+                    <td>@usertopic.Topic</td>
+                    <td>@usertopic.TopicTime</td>
+                    <td>@usertopic.IpAddress</td>
+                    <td>@usertopic.FromServerName</td>
+                </tr>
+                <tr></tr>
+            }
+        }
+
+    </tbody>
+</table>
+
+
+
+<br />
+<br />
+<p>缓存运行：@cacheOptions.Value?.EnableCache  @CommonHelper.GetWebLocation()</p>

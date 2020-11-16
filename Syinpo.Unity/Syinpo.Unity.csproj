@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+  </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocumentsOnBuild>false</OpenApiGenerateDocumentsOnBuild>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <Compile Remove="AspNetCore\ActionResults\**" />
+    <EmbeddedResource Remove="AspNetCore\ActionResults\**" />
+    <None Remove="AspNetCore\ActionResults\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="MediatR.Extensions.Autofac.DependencyInjection" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.SqlServer" Version="3.1.4" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.4.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Syinpo.BusinessLogic\Syinpo.BusinessLogic.csproj" />
+    <ProjectReference Include="..\Syinpo.Core\Syinpo.Core.csproj" />
+    <ProjectReference Include="..\Syinpo.Model\Syinpo.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoBogus">
+      <HintPath>..\packages\Custom\Bogus\AutoBogus.dll</HintPath>
+    </Reference>
+    <Reference Include="Bogus">
+      <HintPath>..\packages\Custom\Bogus\Bogus.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

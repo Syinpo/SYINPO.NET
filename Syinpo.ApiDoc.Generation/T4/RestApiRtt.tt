@@ -1,0 +1,231 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+<#@ assembly name="Syinpo.ApiDoc.Generation" #>
+
+
+<span class="small pull-right mobile-hide">
+  <a href="#">改进这个文档</a>
+</span>
+
+
+<h1 class="text-capitalize"><#= _data.Info.Name ?? "" #></h1>
+
+<div class="markdown level1 description">1.	描述：<#= _data.Info.Description ?? "" #></div>
+
+<div class="markdown level1 description">2.	接口类型：RestApi</div>
+
+<div class="markdown level1 description">3. 安全认证：<#= _data.Info.Authentication  #></div>
+
+<h2 id="EnvironmentResources">调用环境</h2>
+<table class="table table-bordered table-striped table-condensed">
+	<thead>
+		<tr>
+			<th>操作</th>
+			<th>HTTP方法</th>
+			<th>请求URI</th>
+			<th>环境</th>
+		</tr>
+	</thead>
+<tbody>
+<# foreach (var item in _data.EnvironmentResources) { #>
+		<tr>
+		<td><#= _data.Info.OperationId #></td>
+		<td><#= _data.Info.OperationName #></td>
+		<td><#= item.LoacalUrl #></td>
+		<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"><#= item.Description #></font></font></td>
+		</tr>
+		<tr>
+<# } #>
+</tbody>
+</table>
+
+
+<# if( _data.RequestPathParameters.Any() ) { #>
+	<h2 id="RequestPathParameters">RequestPath参数</h2>
+	<# IterateThroughChildren( _data.RequestPathParameters, "路径名称" ); #>
+<# } #>
+
+<# if( _data.RequestQueryParameters.Any() ) { #>
+	<h2 id="RequestQueryParameters">RequestQuery参数</h2>
+	<# IterateThroughChildren( _data.RequestQueryParameters ); #>
+<# } #>
+
+<# if( _data.RequestBodyParameters.Any() ) { #>
+	<h2 id="RequestBodyParameters">RequestBody参数</h2>
+
+	### [参数文档](#tab/RequestBodyParameters-doc)
+		<# IterateThroughChildren( _data.RequestBodyParameters ); #>
+
+	<# if( _data.RequestBodyDefinition != null &&  _data.RequestBodyDefinition.SourceCode != null ) { #>
+		### [参数源码](#tab/RequestBodyParameters-sourcecode)
+			<span class="small"><a href="<#= _data.RequestBodyDefinition.SourceCode.ViewSource #>" target="_blank">查看完整源代码</a></span>
+			[!code-csharp[](<#= _data.RequestBodyDefinition.SourceCode.Link  #>)]
+	<# } #>
+
+	---
+<# } #>
+
+<h2 id="Response">响应</h2>
+
+	### [成功](#tab/Response-success)
+		<# var okResponse =  _data.Responses.FirstOrDefault( f => f.StatusCode == "0" ); #>
+		<# if( okResponse != null ) { #>
+			<# IterateThroughChildren( okResponse.Parameters ); #>
+		<# } #>
+
+	### [失败](#tab/Response-fail)
+		<# var failResponse =  _data.Responses.FirstOrDefault( f => f.StatusCode == "-1" ); #>
+		<# if( failResponse != null ) { #>
+			<# IterateThroughChildren( failResponse.Parameters ); #>
+		<# } #>
+
+	### [错误码](#tab/Response-erros)
+		<table class="table table-bordered table-striped table-condensed">
+			<thead>
+				<tr>
+					<th>错误码</th>
+					<th>错误信息</th>
+				</tr>
+			</thead>
+		<tbody>
+		<# foreach (var response in _data.Responses.Where(w => w.StatusCode != "0" )) { #>
+				<tr>
+				<td><#= response.StatusCode #></td>
+				<td><#= response.Description #></td>
+				</tr>
+				<tr>
+		<# } #>
+		</tbody>
+		</table>
+
+	---
+
+	<h2 id="examples">示例</h2>
+	<h3 id="httpfilder"><#= _data.Info.Name #></h3>
+
+	<h4>示例请求 HTTP/1.1</h4>
+	<pre><code class="lang-http"><#= _data.Info.OperationName #> <#= _data.EnvironmentResources.First().LoacalUrl #>
+	</code></pre>
+
+	<# if( !string.IsNullOrEmpty( _data.Example.RequestBodyJson ) ) { #>
+		<h4>示例请求体 Content-Type: application/json</h4>
+		<pre><code class="lang-json"><#= _data.Example.RequestBodyJson  #>
+		</code></pre>
+	<# } #>
+
+	<h4>示例响应 Http StatusCode: 200</h4>
+	<pre><code class="lang-json"><#= _data.Example.ResponseJson  #>
+	</code></pre>
+
+<# if( _data.Definitions.Any() ) { #>
+	<h2 id="Definition">定义</h2>
+	<table class=""table table-bordered table-striped table-condensed"">
+	<tbody>
+	<# foreach (var item in _data.Definitions) { #>
+		<tr>
+			<td>
+				<a href="#<#= item.Name #>" data-linktype="self-bookmark"><#= item.Name #></a>
+			</td>
+			<td><#= item.Description #></td>
+			<td><span class="small">
+				<# if( !string.IsNullOrEmpty( item.SourceCode.ViewSource ) ) { #>
+					<a href="<#= item.SourceCode.ViewSource #>" target="_blank">查看源代码</a>
+				<# } #>
+				</span>
+			</td>
+		</tr>
+	<# } #>
+	</tbody>
+	</table>
+
+	<# foreach (var item in _data.Definitions) { #>
+		<span class="small pull-right mobile-hide">
+			<# if( !string.IsNullOrEmpty( item.SourceCode.ViewSource ) ) { #>
+				<a href="<#= item.SourceCode.ViewSource #>" target="_blank">查看源代码</a>
+			<# } #>
+		</span>
+
+		<h3 id="<#= item.Name #>"><#= item.Name #></h3>
+		<p><#= item.Description #></p>
+
+		<table class="table table-bordered table-striped table-condensed">
+			<thead>
+				<tr>
+					<th>名称</th>
+					<th>类型</th>
+					<th>描述</th>
+				</tr>
+			</thead>
+		<tbody>
+		<# foreach (var par in item.Parameters) { #>
+				<tr>
+				<td><#= par.Name #></td>
+				<td>
+					<# if( par.IsDefinition ){ #>
+						<a href="#<#= par.Ref #>" data-linktype="self-bookmark"><#= par.DataType #></a>
+					<# } else { #>
+						<#= par.DataType #>
+					<# } #>
+				</td>
+				<td><#= par.Description #></td>
+				</tr>
+				<tr>
+		<# } #>
+		</tbody>
+		</table>
+	<# } #>
+<# } #>
+
+
+<#+
+    void IterateThroughChildren( List<Syinpo.ApiDoc.Generation.Model.AllModel.ParameterInfo> parameters, string modelName = null, int currentLevel = 0, int level = 1 )
+    {
+		this.WriteLine( @"<table class=""table table-bordered table-striped table-condensed"">
+							<thead>
+								<tr>
+									<th>{0}</th>
+									<th>数据类型</th>
+									<th>默认值</th>
+									<th>是否必填</th>
+									<th>备注</th>
+								</tr>
+							</thead>
+						<tbody>", modelName ?? "名称" );
+
+		foreach ( var item in parameters ) {
+			currentLevel++;
+
+			this.WriteLine( @"<tr>");
+			this.WriteLine( @"<td><span class=""parametername""><code>{0}</code></span></td>", item.Name );
+			if( item.IsDefinition ){
+				this.WriteLine( @"<td><a href=""#{0}"" data-linktype=""self-bookmark"">{1}</a></td>", item.Ref, item.DataType );
+			}
+			else{
+				this.WriteLine( @"<td>{0}</td>", item.DataType );
+			}
+			this.WriteLine( @"<td>{0}</td>", item.DefaultValue );
+			this.WriteLine( @"<td>{0}</td>", item.Required ? "*" : "" );
+			this.WriteLine( @"<td>{0}</td>", item.Description );
+			this.WriteLine( @"</tr>");
+
+			if( item.IsDefinition && item.Definition.Parameters.Any() && currentLevel <= level ) {
+				currentLevel++;
+
+				this.WriteLine( @"<tr>");
+				this.WriteLine( @"<td colspan=""5"">");
+					IterateThroughChildren( item.Definition.Parameters, currentLevel:currentLevel, level:level);
+				this.WriteLine( @"</td>");
+				this.WriteLine( @"</tr>");
+			}
+		}
+
+		this.WriteLine( @"</tbody></table>");
+	}
+
+#>
+
+

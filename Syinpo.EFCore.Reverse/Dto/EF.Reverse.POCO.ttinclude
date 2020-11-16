@@ -1,0 +1,17 @@
+<#@ import namespace="System.Collections.Generic" #>
+
+
+using FluentValidation;
+using FluentValidation.Attributes;
+using Syinpo.Model.Dto;
+
+<# foreach(Table tbl in from t in Settings.Tables.Where(t => !t.IsMapping).OrderBy(x => x.NameHumanCase) select t) { #>
+
+	[Validator( typeof( <#=tbl.Name#>DtoValidator ) )]
+    public  class <#=tbl.Name#>Dto  : BaseDto{
+      <# foreach(Column col in tbl.Columns.OrderBy(x => x.Ordinal).Where(x => !x.Hidden))		{		#>
+		<#= WritePocoColumn(col) #>
+		<# } #>
+    }
+
+<# } #>

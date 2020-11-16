@@ -1,0 +1,22 @@
+﻿<#@ import namespace="System.Collections.Generic" #>
+
+using FluentValidation;
+
+<# foreach(Table tbl in from t in Settings.Tables.Where(t => !t.IsMapping).OrderBy(x => x.NameHumanCase) select t) { #>
+    public class <#=tbl.Name#>DtoValidator : AbstractValidator<<#=tbl.Name#>Dto> {
+        public <#=tbl.Name#>DtoValidator() {
+
+			<# foreach(Column col in tbl.Columns.OrderBy(x => x.Ordinal).Where(x => !x.Hidden)) { #>
+				<# string comment = !string.IsNullOrEmpty(col.SummaryComments) ? col.SummaryComments : col.Name; #>
+				<# if (!col.IsNullable) {#>
+				RuleFor( x => x.<#=col.Name#> )
+						.NotEmpty()
+						.WithMessage(  "<#=comment#>不能为空" );
+
+				<#}#>
+			<# } #>
+        }
+    }
+
+<# } #>
+

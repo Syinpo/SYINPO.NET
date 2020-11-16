@@ -1,0 +1,67 @@
+﻿@{
+    Layout = "";
+}
+
+@using Syinpo.BusinessLogic.SignalR.Online
+@using Syinpo.Core
+@using Syinpo.Core.Caches
+@using Syinpo.Unity.AspNetCore.Routes
+@using Syinpo.Unity.Firewall.Store
+@using Microsoft.Extensions.Options
+
+@inject IRouteAnalyzer _routeAnalyzer;
+@{
+    var model = _routeAnalyzer.GetAllRouteInformations().OrderBy( p => p.Controller).ToList();
+}
+
+
+
+<form asp-controller="Home" asp-action="Access" method="post">
+    <div>
+        <h1>
+            设备路由禁止访问规则配置
+        </h1>
+        <div>
+            <button type="submit" name="save">保存</button>
+        </div>
+    </div>
+
+
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th scope="col">
+                    <strong>控制器</strong>
+                </th>
+                <th scope="col">
+                    <strong>路由</strong>
+                </th>
+
+                <th scope="col">
+                    <strong>禁止</strong>
+                </th>
+
+            </tr>
+            </thead>
+            <tbody>
+                @foreach( var item in model ) {
+                <tr>
+                    <td>
+                        @item.Controller
+                    </td>
+                    <td>
+                        <strong>@item.Path</strong>
+                    </td>
+                    @{
+                        var isDisable = RouteMemoryStore.Get( item.Path )?.IsDisable ?? false ;
+                        <td>
+                            <input id="disable_@(item.Path)" type="checkbox"  name="disable_@(item.Path)" @( isDisable ? " checked=checked" : null) />
+                        </td>
+                    }
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</form>

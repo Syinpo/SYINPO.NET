@@ -1,0 +1,108 @@
+﻿<#@ import namespace="System.Collections.Generic" #>
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+using Syinpo.Core;
+using Syinpo.Core.Data;
+using Syinpo.Core.Domain.Poco;
+using Syinpo.Core.Helpers;
+using Syinpo.Model.Request.Users;
+
+<#
+foreach (Table tbl in from t in Settings.Tables.Where(t => !t.IsMapping && t.HasPrimaryKey && t.Name != "SqlCache" ).OrderBy(x => x.NameHumanCase) select t)
+{
+#>
+       	<# string tblDX = tbl.Name; #>
+		<# string tblXX =  Inflector.MakeInitialLower( tbl.Name ); #>
+
+
+		<# string fuDX = Inflector.MakePlural(tbl.NameHumanCase); #>
+		<# string fuXX = Inflector.MakeInitialLower( Inflector.MakePlural(tbl.NameHumanCase) ); #>
+
+namespace Syinpo.BusinessLogic.<#= tblDX #>s {
+    public partial class <#= tblDX #>Service  {
+        #region 字段
+
+        private readonly IDbContext _dbContext;
+        private readonly IGenericRepository<<#= tblDX #>> _<#= tblXX #>Repository;
+
+        #endregion
+
+        #region 构造函数
+
+        public <#=tbl.Name #>Service(
+            IDbContext dbContext,
+            IGenericRepository<<#= tblDX #>> <#= tblXX #>Repository  ) {
+            this._dbContext = dbContext;
+            this._<#= tblXX #>Repository = <#= tblXX #>Repository;
+        }
+
+        #endregion
+
+        #region 方法
+
+        #region <#= fuDX #>
+
+        public async Task<PageList<<#= tblDX #>>> Search<#= fuDX #>( int pageIndex = 0, int pageSize = 10000 ) {
+            var query = _<#= tblXX #>Repository.Table;
+
+            var <#= fuXX #> = new PageList<<#= tblDX #>>( query, pageIndex, pageSize );
+
+            return await Task.FromResult( <#= fuXX #> );
+        }
+
+
+        public async Task Delete<#=tbl.Name #>( <#=tbl.Name #> <#= tblXX #> ) {
+            if( <#= tblXX #> == null )
+                throw new ArgumentNullException( nameof( <#= tblXX #> ) );
+
+            await _<#= tblXX #>Repository.Delete( <#= tblXX #> );
+        }
+
+        public async Task<<#= tblDX #>> Get<#= tblDX #>ById( int id ) {
+            if( id == 0 )
+                return null;
+
+            return await _<#= tblXX #>Repository.GetById( id );
+        }
+
+
+        public async Task<List<<#= tblDX #>>> Get<#= fuDX #>ByIds( int[] <#= tblXX #>Ids ) {
+            if( <#= tblXX #>Ids == null || <#= tblXX #>Ids.Length == 0 )
+                return new List<<#= tblDX #>>();
+
+            var query = from c in _<#= tblXX #>Repository.Table
+                        where <#= tblXX #>Ids.Contains( c.Id )
+                        select c;
+            var <#= fuXX #> = query.ToList();
+
+            return await Task.FromResult( <#= fuXX #> );
+        }
+
+        public async Task Insert<#= tblDX #>( <#= tblDX #> <#= tblXX #> ) {
+            if( <#= tblXX #> == null )
+                throw new ArgumentNullException( nameof( <#= tblXX #> ) );
+
+            await _<#= tblXX #>Repository.Create( <#= tblXX #> );
+        }
+
+        public async Task Update<#= tblDX #>( <#= tblDX #> <#= tblXX #> ) {
+            if( <#= tblXX #> == null )
+                throw new ArgumentNullException( nameof( <#= tblXX #> ) );
+
+            await _<#= tblXX #>Repository.Update( <#= tblXX #> );
+        }
+
+
+        #endregion
+
+
+        #endregion
+    }
+}
+<# } #>

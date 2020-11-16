@@ -1,0 +1,41 @@
+﻿{
+  "ContextClassName": "SyinpoContext",
+  "ContextNamespace": null,
+  "DefaultDacpacSchema": null,
+  "FilterSchemas": false,
+  "IncludeConnectionString": false,
+  "ModelNamespace": null,
+  "OutputContextPath": null,
+  "OutputPath": null,
+  "ProjectRootNamespace": "Syinpo.EFCore.Reverse",
+  "Schemas": null,
+  "SelectedHandlebarsLanguage": 0,
+  "SelectedToBeGenerated": 0,
+  "Tables": [
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[Device]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[DeviceSms]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[EventQueue]"
+    },
+    {
+      "HasPrimaryKey": true,
+      "Name": "[dbo].[User]"
+    }
+  ],
+  "UseDatabaseNames": false,
+  "UseDbContextSplitting": false,
+  "UseFluentApiOnly": true,
+  "UseHandleBars": false,
+  "UseInflector": true,
+  "UseLegacyPluralizer": false,
+  "UseNodaTime": false,
+  "UseSpatial": false,
+  "UseStoredProcedures": false
+}
